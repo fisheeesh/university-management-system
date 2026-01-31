@@ -7,7 +7,10 @@ import { db } from "../db";
 export const getAllSubjects = [
     query("search", "Invalid search value.").trim().escape().optional(),
     query("department", "Invalid department value.").trim().escape().optional(),
-    query("department", "Invalid department value.").trim().escape().optional(),
+    query("department", "Invalid department value.").trim().escape().optional().customSanitizer((value) => {
+        // !Escape SQL LIKE wildcards here
+        return String(value).replace(/[%_]/g, '\\$&');
+    }),
     query("page", "Page must be unsigned integer.").isInt({ gt: 0 }).optional(),
     query("limit", "Limit must be greater than 10.").isInt({ gt: 10 }).optional(),
     async (req: Request, res: Response, next: NextFunction) => {
