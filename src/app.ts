@@ -3,16 +3,16 @@ import express, { NextFunction, Request, Response } from "express"
 import helmet from "helmet"
 import morgan from "morgan"
 import cors from "cors"
+import routes from "./routes/v1"
 
 export const app = express()
 
 var whitelist = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
     'http://localhost:4000',
     'http://127.0.0.1:4000',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    process.env.FRONTEND_URL || 'localhost:5173'
 ]
 var corsOptions = {
     origin: function (origin: any, callback: (err: Error | null, origin?: any) => void) {
@@ -41,6 +41,9 @@ app.use((req, res, next) => {
     res.setHeader("Cross-Origin-Resource-Policy", "same-site");
     next();
 });
+
+
+app.use(routes)
 
 app.use((error: any, req: Request, res: Response, next: NextFunction) => {
     const status = error.status || 500
